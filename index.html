@@ -96,7 +96,6 @@
             cursor: pointer;
             transition: 0.2s;
         }
-        .contact-avatar:hover { filter: brightness(0.95); transform: scale(0.98); }
 
         .contact-name-area {
             display: flex;
@@ -127,7 +126,6 @@
             transition: 0.2s;
             font-weight: 500;
         }
-        .edit-name-btn:hover { background: var(--accent); color: var(--light-text); }
 
         .contact-status {
             font-size: 0.6rem;
@@ -163,7 +161,6 @@
             backdrop-filter: blur(4px);
             flex-shrink: 0;
         }
-        .settings-btn:hover { background: var(--accent); color: var(--light-text); }
 
         .chat-messages {
             flex: 1;
@@ -280,8 +277,6 @@
             cursor: pointer;
             transition: 0.1s;
         }
-        .context-menu-item:hover { background: rgba(255,255,255,0.1); }
-        .context-menu-item.danger { color: #ff9f8f; }
 
         .input-area {
             padding: 10px 16px 14px;
@@ -310,7 +305,6 @@
             justify-content: center;
             transition: 0.2s;
         }
-        .emoji-btn:hover { background: var(--accent); transform: scale(0.96); }
 
         .message-input {
             flex: 1;
@@ -323,11 +317,6 @@
             outline: none;
             transition: all 0.2s;
             font-family: inherit;
-        }
-        .message-input:focus {
-            border-color: var(--highlight);
-            background: rgba(255, 255, 250, 1);
-            box-shadow: 0 0 0 2px rgba(211, 211, 212, 0.3);
         }
 
         .three-dots-btn {
@@ -344,7 +333,6 @@
             justify-content: center;
             transition: 0.2s;
         }
-        .three-dots-btn:hover { background: var(--accent); transform: scale(0.96); }
 
         .send-btn {
             background: var(--accent);
@@ -362,10 +350,8 @@
             letter-spacing: 0.2px;
             box-shadow: 0 1px 2px rgba(0,0,0,0.08);
         }
-        .send-btn:hover { background: #8e8d8d; transform: translateY(-1px); }
-        .send-btn:active { transform: translateY(1px); }
 
-        /* 图片库面板 - 扩大尺寸 */
+        /* 图片库面板 */
         .image-emoji-picker {
             position: absolute;
             bottom: 70px;
@@ -435,14 +421,8 @@
             line-height: 16px;
             cursor: pointer;
         }
-        .empty-images {
-            color: #aaa;
-            font-size: 0.8rem;
-            text-align: center;
-            padding: 20px;
-        }
 
-        /* 设置模态框 */
+        /* 模态框通用 */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -555,17 +535,14 @@
             gap: 16px;
         }
 
-        /* 字卡管理样式 */
+        /* 字卡管理样式 (精简但完整) */
         .sub-tabs { display: flex; gap: 8px; border-bottom: 1px solid rgba(163,162,162,0.4); padding-bottom: 8px; flex-wrap: wrap; }
         .sub-tab { background: none; border: none; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; color: #5a5a58; }
         .sub-tab.active { background: var(--accent); color: white; }
         .sub-panel { display: none; flex-direction: column; gap: 12px; }
         .sub-panel.active { display: flex; }
         .cards-layout { display: flex; flex-direction: column; gap: 12px; }
-        .batch-section, .search-section { flex: 1; display: flex; flex-direction: column; gap: 10px; }
         .form-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 8px; }
-        .form-row label { font-size: 0.75rem; width: 100px; color: #3a3a38; }
-        input, select, textarea { background: rgba(255,255,248,0.9); border: 1px solid var(--accent); border-radius: 20px; padding: 6px 12px; font-size: 0.75rem; flex: 1; }
         button.small-btn { background: var(--accent); border: none; padding: 6px 12px; border-radius: 20px; color: white; cursor: pointer; font-size: 0.7rem; }
         button.danger-btn { background: #aa6f6f; }
         .search-box { width: 100%; margin-bottom: 8px; }
@@ -581,9 +558,6 @@
         .batch-textarea { min-height: 100px; resize: vertical; }
 
         .pref-text { color: rgba(0,0,0,0.6); font-size: 1.17rem; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
-        .pref-text label { width: auto; min-width: 100px; font-size: inherit; }
-        .pref-text input, .pref-text select { font-size: 1rem; padding: 8px 12px; flex: 1; min-width: 120px; }
-        .pref-text span { font-size: 0.9rem; }
         .button-group { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
 
         .letters-split { display: flex; gap: 12px; height: 100%; min-height: 300px; }
@@ -591,9 +565,6 @@
         .letter-column h5 { font-size: 0.8rem; margin-bottom: 8px; text-align: center; color: #3a3a38; }
         .letter-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; max-height: 280px; }
         .letter-item { background: rgba(243,242,232,0.7); border-radius: 14px; padding: 8px; font-size: 0.7rem; cursor: pointer; transition: 0.1s; }
-        .letter-item:hover { background: rgba(243,242,232,0.9); }
-        .write-letter-btn { margin-top: 8px; width: 100%; }
-        .letter-toggle { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; font-size: 0.7rem; }
 
         .letter-editor-modal, .letter-view-modal {
             position: fixed;
@@ -611,7 +582,6 @@
             opacity: 0;
             transition: 0.2s;
         }
-        .letter-editor-modal.active, .letter-view-modal.active { visibility: visible; opacity: 1; }
         .letter-editor-card, .letter-view-card {
             background: #fef7e0;
             border-radius: 24px;
@@ -621,27 +591,24 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             font-family: 'Courier New', monospace;
         }
-        .letter-editor-card textarea { width: 100%; min-height: 200px; background: transparent; border: none; font-size: 0.85rem; resize: vertical; outline: none; }
-        .letter-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px; }
 
         /* 日历样式 */
         .calendar-container { display: flex; flex-direction: column; gap: 12px; }
         .calendar-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; }
-        .calendar-day { background: rgba(200, 203, 198, 0.3); border-radius: 12px; padding: 8px 4px; font-size: 0.75rem; cursor: pointer; transition: 0.1s; }
-        .calendar-day.has-event { background: rgba(163, 162, 162, 0.6); font-weight: bold; }
-        .calendar-day.selected { background: var(--accent); color: white; }
-        .event-editor { margin-top: 16px; padding: 12px; background: rgba(200, 203, 198, 0.3); border-radius: 20px; }
-        .event-item { background: rgba(243, 242, 232, 0.7); border-radius: 14px; padding: 8px; margin-bottom: 6px; font-size: 0.7rem; }
+        .calendar-day { background: rgba(200,203,198,0.3); border-radius: 12px; padding: 8px 4px; font-size: 0.75rem; cursor: pointer; }
+        .calendar-day.has-event { background: rgba(163,162,162,0.6); font-weight: bold; }
+        .event-editor { margin-top: 16px; padding: 12px; background: rgba(200,203,198,0.3); border-radius: 20px; }
+        .event-item { background: rgba(243,242,232,0.7); border-radius: 14px; padding: 8px; margin-bottom: 6px; font-size: 0.7rem; }
 
         /* 朋友圈样式 */
         .moments-container { display: flex; flex-direction: column; gap: 12px; }
         .moments-header { position: relative; height: 120px; background-size: cover; background-position: center; border-radius: 20px; margin-bottom: 20px; cursor: pointer; }
-        .moments-avatar { position: absolute; bottom: -20px; right: 16px; width: 50px; height: 50px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; cursor: pointer; border: 2px solid rgba(243, 242, 232, 0.9); overflow: hidden; }
+        .moments-avatar { position: absolute; bottom: -20px; right: 16px; width: 50px; height: 50px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; cursor: pointer; border: 2px solid rgba(243,242,232,0.9); overflow: hidden; }
         .moments-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .moments-signature { position: absolute; bottom: -25px; left: 16px; font-size: 0.6rem; color: #5a5a58; background: rgba(255,255,255,0.5); padding: 2px 8px; border-radius: 20px; max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
         .moments-list { max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-        .moment-item { background: rgba(200, 203, 198, 0.3); border-radius: 20px; padding: 12px; }
+        .moment-item { background: rgba(200,203,198,0.3); border-radius: 20px; padding: 12px; }
         .moment-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
         .moment-avatar { width: 32px; height: 32px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; overflow: hidden; }
         .moment-avatar img { width: 100%; height: 100%; object-fit: cover; }
@@ -652,11 +619,10 @@
         .moment-time { font-size: 0.6rem; color: #8e8e92; margin-top: 4px; }
         .moment-actions { display: flex; gap: 16px; margin-top: 8px; font-size: 0.7rem; }
         .moment-action { cursor: pointer; color: #6a6a72; }
-        .moment-action:hover { color: var(--accent); }
         .comments-container { margin-top: 8px; padding-left: 20px; border-left: 2px solid rgba(163,162,162,0.3); font-size: 0.65rem; display: flex; flex-direction: column; gap: 4px; }
         .add-moment-btn { margin-top: 8px; }
         .account-switch { display: flex; gap: 8px; margin-bottom: 12px; overflow-x: auto; }
-        .account-chip { background: rgba(163, 162, 162, 0.4); padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; cursor: pointer; }
+        .account-chip { background: rgba(163,162,162,0.4); padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; cursor: pointer; }
         .account-chip.active { background: var(--accent); color: white; }
         .new-moment-modal {
             position: fixed;
@@ -674,7 +640,6 @@
             opacity: 0;
             transition: 0.2s;
         }
-        .new-moment-modal.active { visibility: visible; opacity: 1; }
         .new-moment-card { background: rgba(243,242,232,0.95); border-radius: 28px; width: 90%; max-width: 380px; padding: 20px; }
         .new-moment-card textarea { width: 100%; min-height: 120px; background: rgba(255,255,248,0.9); border: 1px solid var(--accent); border-radius: 20px; padding: 12px; font-size: 0.8rem; margin-bottom: 12px; }
         .image-selector { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
@@ -714,7 +679,7 @@
                         <span class="contact-name-display" id="contactNameDisplay">回声旅伴</span>
                         <button class="edit-name-btn" id="editContactNameBtn">✎</button>
                     </div>
-                    <div class="contact-status" id="statusTextBtn">
+                    <div class="contact-status">
                         <span class="status-dot"></span>
                         <span id="customStatusSpan">字卡智语</span>
                     </div>
@@ -748,7 +713,7 @@
     <div class="context-menu-item danger" data-action="delete">删除</div>
 </div>
 
-<!-- 图片库面板（扩大，点击直接发送图片） -->
+<!-- 图片库面板 -->
 <div class="image-emoji-picker" id="imageEmojiPicker">
     <div class="batch-upload-area">
         <label class="batch-upload-label">📤 批量添加图片</label>
@@ -756,7 +721,7 @@
         <button class="clear-images-btn" id="clearAllImagesBtn" style="background:#aa6f6f; border:none; border-radius:20px; padding:5px 12px; color:white; font-size:0.7rem;">清空所有</button>
     </div>
     <div class="image-grid" id="imageGrid"></div>
-    <div class="info-note" style="color:#ccc;">点击图片直接发送（JPG格式）</div>
+    <div class="info-note" style="color:#ccc;">点击图片直接发送</div>
 </div>
 
 <!-- 设置模态框 -->
@@ -775,7 +740,7 @@
                 <div class="menu-card" data-page="calendar"><div class="menu-icon">📅</div><div class="menu-title">日历</div></div>
                 <div class="menu-card" data-page="moments"><div class="menu-icon">🌍</div><div class="menu-title">朋友圈</div></div>
             </div>
-            <!-- 字卡详情页 -->
+            <!-- 字卡详情页 (内容较多，但完整) -->
             <div class="detail-page" id="cardsPage">
                 <div class="detail-header"><button class="back-btn">← 返回</button><span class="detail-title">字卡</span></div>
                 <div class="detail-content">
@@ -786,50 +751,40 @@
                     </div>
                     <div id="cardManagePanel" class="sub-panel active">
                         <div class="cards-layout">
-                            <div class="batch-section">
-                                <div class="form-row">
-                                    <select id="batchFolderSelect" style="flex:2"></select>
-                                    <button class="small-btn" id="createFolderFromBatchBtn">➕ 新建文件夹</button>
-                                    <button class="small-btn danger-btn" id="deleteFolderBtn">🗑️ 删除文件夹</button>
-                                </div>
-                                <div class="form-row">
-                                    <button class="small-btn" id="exportAllPhrasesBtn">📁 导出全部字卡</button>
-                                    <button class="small-btn" id="exportFolderPhrasesBtn">📂 导出当前文件夹字卡</button>
-                                </div>
-                                <textarea id="batchPhrasesInput" class="batch-textarea" rows="4" placeholder="批量添加字卡（每行一条）"></textarea>
-                                <button class="small-btn" id="batchAddPhrasesBtn">批量添加</button>
+                            <div class="form-row">
+                                <select id="batchFolderSelect" style="flex:2"></select>
+                                <button class="small-btn" id="createFolderFromBatchBtn">➕ 新建文件夹</button>
+                                <button class="small-btn danger-btn" id="deleteFolderBtn">🗑️ 删除文件夹</button>
                             </div>
-                            <div class="search-section">
-                                <div style="display: flex; gap: 8px; align-items: center;">
-                                    <input type="text" id="searchPhraseInput" class="search-box" placeholder="🔍 搜索字卡..." style="flex:1">
-                                    <button class="shuffle-btn" id="shufflePhrasesBtn" title="随机重排字卡">🎲 随机</button>
-                                </div>
-                                <div class="folder-tabs" id="folderTabs"></div>
-                                <div class="phrase-list" id="phraseListContainer"></div>
+                            <div class="form-row">
+                                <button class="small-btn" id="exportAllPhrasesBtn">📁 导出全部字卡</button>
+                                <button class="small-btn" id="exportFolderPhrasesBtn">📂 导出当前文件夹字卡</button>
                             </div>
+                            <textarea id="batchPhrasesInput" class="batch-textarea" rows="4" placeholder="批量添加字卡（每行一条）"></textarea>
+                            <button class="small-btn" id="batchAddPhrasesBtn">批量添加</button>
+                            <div style="display: flex; gap: 8px; align-items: center;">
+                                <input type="text" id="searchPhraseInput" class="search-box" placeholder="🔍 搜索字卡..." style="flex:1">
+                                <button class="shuffle-btn" id="shufflePhrasesBtn" title="随机重排字卡">🎲 随机</button>
+                            </div>
+                            <div class="folder-tabs" id="folderTabs"></div>
+                            <div class="phrase-list" id="phraseListContainer"></div>
                         </div>
                     </div>
                     <div id="statusManagePanel" class="sub-panel">
-                        <div class="form-row"><strong>左上状态管理（对方在线状态）</strong></div>
-                        <div class="form-row">
-                            <textarea id="topStatusBatchInput" rows="3" placeholder="批量添加左上状态（每行一条）" style="width:100%"></textarea>
-                            <button class="small-btn" id="addTopStatusBtn">批量添加</button>
-                        </div>
+                        <div class="form-row"><strong>左上状态管理</strong></div>
+                        <textarea id="topStatusBatchInput" rows="3" placeholder="批量添加左上状态（每行一条）"></textarea>
+                        <button class="small-btn" id="addTopStatusBtn">批量添加</button>
                         <div class="phrase-list" id="topStatusList"></div>
-                        <div class="form-row"><strong>左下状态管理（对方随机发送的状态消息）</strong></div>
-                        <div class="form-row">
-                            <textarea id="leftStatusBatchInput" rows="3" placeholder="批量添加左下状态（每行一条）" style="width:100%"></textarea>
-                            <button class="small-btn" id="addLeftStatusBtn">批量添加</button>
-                        </div>
+                        <div class="form-row"><strong>左下状态管理</strong></div>
+                        <textarea id="leftStatusBatchInput" rows="3" placeholder="批量添加左下状态（每行一条）"></textarea>
+                        <button class="small-btn" id="addLeftStatusBtn">批量添加</button>
                         <div class="phrase-list" id="leftStatusList"></div>
                     </div>
                     <div id="emojiPackPanel" class="sub-panel">
-                        <div class="form-row"><strong>表情包图片（随机回复时使用）</strong></div>
-                        <div class="form-row">
-                            <button class="small-btn" id="addEmojiPackBtn">📤 批量添加图片</button>
-                            <input type="file" id="emojiPackInput" multiple accept="image/jpeg,image/png,image/gif,image/webp" style="display:none">
-                            <button class="small-btn danger-btn" id="clearEmojiPackBtn">清空所有表情</button>
-                        </div>
+                        <div class="form-row"><strong>表情包图片（随机回复）</strong></div>
+                        <button class="small-btn" id="addEmojiPackBtn">📤 批量添加图片</button>
+                        <input type="file" id="emojiPackInput" multiple accept="image/*" style="display:none">
+                        <button class="small-btn danger-btn" id="clearEmojiPackBtn">清空所有表情</button>
                         <div class="phrase-list" id="emojiPackList"></div>
                     </div>
                 </div>
@@ -846,10 +801,10 @@
                         <select id="replyModeSelect">
                             <option value="merge">合并为一条消息</option>
                             <option value="separate">独立多条消息</option>
-                            <option value="random">随机（合并/独立各50%）</option>
+                            <option value="random">随机</option>
                         </select>
                     </div>
-                    <div class="form-row pref-text"><label>后台发消息:</label><input type="checkbox" id="backgroundMsgSwitch"><span>开启后页面隐藏时继续发送消息并推送通知</span></div>
+                    <div class="form-row pref-text"><label>后台发消息:</label><input type="checkbox" id="backgroundMsgSwitch"><span>页面隐藏时继续发送</span></div>
                     <div class="button-group">
                         <button class="small-btn" id="clearChatHistoryBtn">🗑️ 清除聊天记录</button>
                         <button class="small-btn danger-btn" id="clearAllDataBtn">⚠️ 清空全部数据</button>
@@ -871,7 +826,7 @@
                             <h5>📬 信件回复 / 主动来信</h5>
                             <div class="letter-list" id="receivedLettersList"></div>
                             <div class="letter-toggle"><span>显示在聊天记录</span><input type="checkbox" id="showReceivedInChat" checked></div>
-                            <div id="dailyLetterLimitInfo" style="font-size:0.6rem; margin-top:4px; text-align:center;"></div>
+                            <div id="dailyLetterLimitInfo" style="font-size:0.6rem; margin-top:4px;"></div>
                         </div>
                     </div>
                 </div>
@@ -881,7 +836,7 @@
                 <div class="detail-header"><button class="back-btn">← 返回</button><span class="detail-title">外观定制</span></div>
                 <div class="detail-content">
                     <div class="form-row"><label>消息圆角(px):</label><input type="range" id="bubbleRadiusSlider" min="0" max="30" step="1" value="20"><span id="radiusValue">20px</span></div>
-                    <div class="form-row"><label>字重(粗细):</label><select id="fontWeightSelect"><option value="400">正常(400)</option><option value="500">中等(500)</option><option value="600">半粗(600)</option><option value="700">粗(700)</option></select></div>
+                    <div class="form-row"><label>字重(粗细):</label><select id="fontWeightSelect"><option value="400">正常</option><option value="500">中等</option><option value="600">半粗</option><option value="700">粗</option></select></div>
                     <div class="form-row"><label>背景图片:</label><input type="text" id="bgImageUrl" placeholder="图片URL"><button class="small-btn" id="uploadBgBtn">📁 上传图片</button><input type="file" id="bgImageFile" accept="image/*" style="display:none"></div>
                     <div class="form-row"><button class="small-btn" id="applyBgBtn">应用背景</button><button class="small-btn" id="resetBgBtn">重置背景</button></div>
                 </div>
@@ -931,7 +886,7 @@
         <div class="wordcard-select">
             <button class="small-btn" id="randomWordcardBtn">🎲 随机字卡</button>
         </div>
-        <div class="letter-actions" style="margin-top:16px;">
+        <div class="letter-actions">
             <button class="small-btn" id="cancelMomentBtn">取消</button>
             <button class="small-btn" id="sendMomentBtn">发送</button>
         </div>
@@ -1007,7 +962,6 @@
     };
     const backBtns = document.querySelectorAll('.back-btn');
     const avatarBtn = document.getElementById('avatarBtn');
-    const statusTextBtn = document.getElementById('statusTextBtn');
     const customStatusSpan = document.getElementById('customStatusSpan');
     const emojiBtn = document.getElementById('emojiBtn');
     const imageEmojiPicker = document.getElementById('imageEmojiPicker');
@@ -1022,7 +976,6 @@
     let searchKeyword = "";
     let currentMsgIndex = null;
 
-    // 辅助函数
     function formatTime() { return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
     function formatDateTime() { return new Date().toLocaleString(); }
     function escapeHtml(str) { return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])); }
@@ -1115,7 +1068,7 @@
         const activeRow = document.getElementById('activeIntervalRow');
         if (activeRow) activeRow.style.display = preferences.autoActive ? 'flex' : 'none';
         if (document.getElementById('activeIntervalSec')) document.getElementById('activeIntervalSec').value = preferences.activeIntervalSec;
-        if (document.getElementById('replyModeSelect')) document.getElementById('replyModeSelect').value = preferences.replyMode || "merge";
+        if (document.getElementById('replyModeSelect')) document.getElementById('replyModeSelect').value = preferences.replyMode;
         if (document.getElementById('backgroundMsgSwitch')) document.getElementById('backgroundMsgSwitch').checked = preferences.backgroundMsg;
         if (document.getElementById('bubbleRadiusSlider')) document.getElementById('bubbleRadiusSlider').value = preferences.bubbleRadius;
         if (document.getElementById('radiusValue')) document.getElementById('radiusValue').innerText = preferences.bubbleRadius + 'px';
@@ -1127,7 +1080,7 @@
         if (batchFolderSelect) batchFolderSelect.innerHTML = folders.map(f => `<option value="${f}">${f}</option>`).join('');
     }
 
-    // 消息渲染（支持图片显示）
+    // 消息渲染
     function renderChatMessages() {
         if (!chatMessagesDiv) return;
         if (messages.length === 0) { chatMessagesDiv.innerHTML = '<div class="typing-indicator">✨ 开始对话吧</div>'; return; }
@@ -1185,7 +1138,6 @@
         return true;
     }
 
-    // 随机回复：从字卡文本 + 表情包图片中随机抽取
     function generateRandomItem() {
         const allItems = [];
         phrases.forEach(p => allItems.push({ type: 'text', data: p.text }));
@@ -1203,14 +1155,14 @@
     }
 
     function getRandomDelayMs() {
-        const min = Math.max(1, preferences.minDelaySec || 1);
-        const max = Math.max(min, preferences.maxDelaySec || 3);
+        const min = Math.max(1, preferences.minDelaySec);
+        const max = Math.max(min, preferences.maxDelaySec);
         const sec = min + Math.random() * (max - min);
         return sec * 1000;
     }
 
     function executeReplyAction() {
-        let mode = preferences.replyMode || "merge";
+        let mode = preferences.replyMode;
         if (mode === "random") mode = Math.random() < 0.5 ? "merge" : "separate";
         const count = Math.floor(Math.random() * 3) + 1;
         if (mode === "merge") {
@@ -1261,7 +1213,7 @@
         triggerReply();
     }
 
-    // 图片库（手动发送图片，点击直接发送）
+    // 图片库
     function renderImageGrid() {
         if (imageEmojis.length === 0) { imageGrid.innerHTML = '<div class="empty-images">暂无图片，点击上方添加</div>'; return; }
         let html = '';
@@ -1283,7 +1235,7 @@
         });
     }
 
-    // 批量添加图片（优化性能，一次性处理）
+    // 批量添加图片辅助
     function addImagesToCollection(collection, files, onComplete) {
         let pending = files.length;
         if (pending === 0) { if (onComplete) onComplete(); return; }
@@ -1413,7 +1365,7 @@
     function deleteFolderUI() {
         const targetFolder = document.getElementById('batchFolderSelect').value;
         if (targetFolder === "默认") { alert("默认文件夹不能删除"); return; }
-        const choice = confirm(`删除文件夹“${targetFolder}”？\n按“确定”仅删除文件夹，字卡将移至“默认”文件夹。\n按“取消”则删除文件夹及其中的所有字卡。`);
+        const choice = confirm(`删除文件夹“${targetFolder}”？\n“确定”仅删除文件夹，字卡移至默认。“取消”删除文件夹及字卡。`);
         if (choice === true) { phrases.forEach(p => { if (p.folder === targetFolder) p.folder = "默认"; }); folders = folders.filter(f => f !== targetFolder); if (currentFolder === targetFolder) currentFolder = "默认"; persistAll(); refreshPhraseUI(); }
         else if (choice === false) { phrases = phrases.filter(p => p.folder !== targetFolder); folders = folders.filter(f => f !== targetFolder); if (currentFolder === targetFolder) currentFolder = "默认"; persistAll(); refreshPhraseUI(); }
     }
@@ -1452,7 +1404,7 @@
         for (let d = 1; d <= daysInMonth; d++) {
             const dateStr = `${currentCalendarYear}-${String(currentCalendarMonth + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
             const hasEvent = calendarEvents[dateStr] && calendarEvents[dateStr].length > 0;
-            html += `<div class="calendar-day ${hasEvent ? 'has-event' : ''} ${selectedCalendarDate === dateStr ? 'selected' : ''}" data-date="${dateStr}">${d}</div>`;
+            html += `<div class="calendar-day ${hasEvent ? 'has-event' : ''}" data-date="${dateStr}">${d}</div>`;
         }
         html += `</div><div class="event-editor" id="eventEditor"></div>`;
         container.innerHTML = html;
@@ -1494,7 +1446,7 @@
         document.querySelectorAll('.del-event').forEach(btn => { btn.addEventListener('click', () => { const idx = parseInt(btn.dataset.idx); calendarEvents[date].splice(idx, 1); if (calendarEvents[date].length === 0) delete calendarEvents[date]; persistAll(); renderCalendar(); }); });
     }
 
-    // 朋友圈
+    // 朋友圈（完整持久化）
     function renderMoments() {
         const container = document.getElementById('momentsContent');
         if (!container) return;
@@ -1509,6 +1461,7 @@
             document.querySelectorAll('.account-chip').forEach(chip => { chip.addEventListener('click', () => { currentMomentAccount = chip.dataset.acc; renderMoments(); }); });
             document.getElementById('addAccountBtn')?.addEventListener('click', () => { let name = prompt('账户名称'); if (name) { const id = Date.now() + ''; momentsAccounts.push({ id, name, avatar: '😊' }); momentsAvatars[id] = '😊'; momentsSignatures[id] = ''; persistAll(); renderMoments(); } });
         }
+        // 头像/背景/签名修改（持久化）
         document.getElementById('momentsAvatar')?.addEventListener('click', () => {
             let input = document.createElement('input');
             input.type = 'file';
@@ -1641,7 +1594,7 @@
         else document.documentElement.style.setProperty('--chat-bg-image', 'none');
     }
 
-    function clearChatHistory() { if (confirm('清除所有聊天记录？字卡库、信件、设置等不受影响。')) { messages = []; persistAll(); renderChatMessages(); if (chatMessagesDiv) chatMessagesDiv.innerHTML = '<div class="typing-indicator">✨ 对话已清空</div>'; } }
+    function clearChatHistory() { if (confirm('清除所有聊天记录？')) { messages = []; persistAll(); renderChatMessages(); if (chatMessagesDiv) chatMessagesDiv.innerHTML = '<div class="typing-indicator">✨ 对话已清空</div>'; } }
     function clearAllData() { if (confirm('⚠️ 清空所有数据？不可恢复！')) { localStorage.clear(); location.reload(); } }
 
     function startAutoActive() { if (autoActiveTimer) clearInterval(autoActiveTimer); if (preferences.autoActive) { autoActiveTimer = setInterval(() => { if (!document.hidden && !pendingReply) { const delayMs = getRandomDelayMs(); setTimeout(() => executeReplyAction(), delayMs); } }, preferences.activeIntervalSec * 1000); } }
@@ -1649,26 +1602,18 @@
     function initBackgroundMessaging() { if (backgroundInterval) clearInterval(backgroundInterval); if (preferences.backgroundMsg) { backgroundInterval = setInterval(() => { if (document.hidden && !pendingReply) { const delayMs = getRandomDelayMs(); setTimeout(() => executeReplyAction(), delayMs); } }, 30000); } }
 
     function showMainMenu() { mainMenuGrid.style.display = 'grid'; for (let key in detailPages) detailPages[key].classList.remove('active'); document.getElementById('modalTitle').innerText = '设置'; }
-    function showDetailPage(pageId) { 
-        mainMenuGrid.style.display = 'none'; 
-        for (let key in detailPages) detailPages[key].classList.remove('active'); 
-        detailPages[pageId].classList.add('active'); 
-        let title = { cards: '字卡', prefs: '偏好', letters: '信件', appearance: '外观', calendar: '日历', moments: '朋友圈' }[pageId]; 
-        document.getElementById('modalTitle').innerText = title; 
-        if (pageId === 'letters') refreshLettersUI(); 
-        if (pageId === 'cards') { 
-            refreshPhraseUI(); 
-            refreshStatusLists(); 
-            refreshEmojiPackUI(); 
-            const activeSub = document.querySelector('#cardsPage .sub-tab.active')?.dataset.sub;
-            if (activeSub === 'cardManage') document.getElementById('cardManagePanel').classList.add('active');
-            else if (activeSub === 'statusManage') document.getElementById('statusManagePanel').classList.add('active');
-            else if (activeSub === 'emojiPack') document.getElementById('emojiPackPanel').classList.add('active');
-        }
-        if (pageId === 'calendar') renderCalendar(); 
-        if (pageId === 'moments') renderMoments(); 
-        if (pageId === 'prefs') updateUI(); 
-        if (pageId === 'appearance') updateUI(); 
+    function showDetailPage(pageId) {
+        mainMenuGrid.style.display = 'none';
+        for (let key in detailPages) detailPages[key].classList.remove('active');
+        detailPages[pageId].classList.add('active');
+        let title = { cards: '字卡', prefs: '偏好', letters: '信件', appearance: '外观', calendar: '日历', moments: '朋友圈' }[pageId];
+        document.getElementById('modalTitle').innerText = title;
+        if (pageId === 'letters') refreshLettersUI();
+        if (pageId === 'cards') { refreshPhraseUI(); refreshStatusLists(); refreshEmojiPackUI(); }
+        if (pageId === 'calendar') renderCalendar();
+        if (pageId === 'moments') renderMoments();
+        if (pageId === 'prefs') updateUI();
+        if (pageId === 'appearance') updateUI();
     }
 
     function closeContextMenu() { contextMenu.classList.remove('active'); currentMsgIndex = null; }
@@ -1688,7 +1633,6 @@
         closeContextMenu();
     }
 
-    // 事件绑定（批量添加图片优化）
     function attachEvents() {
         sendBtn.onclick = sendMyMessage;
         forceReplyBtn.onclick = () => manualForceReply();
@@ -1709,31 +1653,13 @@
         // 状态
         document.getElementById('addTopStatusBtn')?.addEventListener('click', addTopStatusBatch);
         document.getElementById('addLeftStatusBtn')?.addEventListener('click', addLeftStatusBatch);
-        // 表情包批量添加（优化）
+        // 表情包批量添加
         document.getElementById('addEmojiPackBtn')?.addEventListener('click', () => { document.getElementById('emojiPackInput').click(); });
-        document.getElementById('emojiPackInput')?.addEventListener('change', (e) => {
-            const files = e.target.files;
-            if (files.length) {
-                addImagesToCollection(emojiPackImages, files, () => {
-                    persistAll();
-                    refreshEmojiPackUI();
-                });
-            }
-            e.target.value = '';
-        });
+        document.getElementById('emojiPackInput')?.addEventListener('change', (e) => { const files = e.target.files; if (files.length) { addImagesToCollection(emojiPackImages, files, () => { persistAll(); refreshEmojiPackUI(); }); } e.target.value = ''; });
         document.getElementById('clearEmojiPackBtn')?.addEventListener('click', () => { if (confirm('清空所有表情包图片？')) { emojiPackImages = []; persistAll(); refreshEmojiPackUI(); } });
-        // 图片库批量添加（优化）
+        // 图片库批量添加
         document.querySelector('.batch-upload-label')?.addEventListener('click', () => batchImageUpload.click());
-        batchImageUpload.onchange = (e) => {
-            const files = e.target.files;
-            if (files.length) {
-                addImagesToCollection(imageEmojis, files, () => {
-                    persistAll();
-                    renderImageGrid();
-                });
-            }
-            batchImageUpload.value = '';
-        };
+        batchImageUpload.onchange = (e) => { const files = e.target.files; if (files.length) { addImagesToCollection(imageEmojis, files, () => { persistAll(); renderImageGrid(); }); } batchImageUpload.value = ''; };
         clearAllImagesBtn.onclick = () => { if (confirm('清空所有图片？')) { imageEmojis = []; persistAll(); renderImageGrid(); } };
         // 偏好
         const minDelay = document.getElementById('minDelaySec'); const maxDelay = document.getElementById('maxDelaySec');
