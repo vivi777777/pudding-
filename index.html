@@ -775,7 +775,7 @@
                 <div class="menu-card" data-page="calendar"><div class="menu-icon">📅</div><div class="menu-title">日历</div></div>
                 <div class="menu-card" data-page="moments"><div class="menu-icon">🌍</div><div class="menu-title">朋友圈</div></div>
             </div>
-            <!-- 字卡详情页（包含表情包子主题） -->
+            <!-- 字卡详情页 -->
             <div class="detail-page" id="cardsPage">
                 <div class="detail-header"><button class="back-btn">← 返回</button><span class="detail-title">字卡</span></div>
                 <div class="detail-content">
@@ -823,7 +823,6 @@
                         </div>
                         <div class="phrase-list" id="leftStatusList"></div>
                     </div>
-                    <!-- 表情包子主题 -->
                     <div id="emojiPackPanel" class="sub-panel">
                         <div class="form-row"><strong>表情包图片（随机回复时使用）</strong></div>
                         <div class="form-row">
@@ -1126,11 +1125,9 @@
         if (document.getElementById('showReceivedInChat')) document.getElementById('showReceivedInChat').checked = letterVisibility.showReceivedInChat;
         const batchFolderSelect = document.getElementById('batchFolderSelect');
         if (batchFolderSelect) batchFolderSelect.innerHTML = folders.map(f => `<option value="${f}">${f}</option>`).join('');
-        renderCalendar();
-        renderMoments();
     }
 
-    // 消息渲染（使用事件委托，避免性能问题）
+    // 消息渲染（支持图片显示）
     function renderChatMessages() {
         if (!chatMessagesDiv) return;
         if (messages.length === 0) { chatMessagesDiv.innerHTML = '<div class="typing-indicator">✨ 开始对话吧</div>'; return; }
@@ -1154,22 +1151,22 @@
                     </div>`;
         });
         chatMessagesDiv.innerHTML = html;
-        // 使用事件委托
-        chatMessagesDiv.ondblclick = (e) => {
-            const msgDiv = e.target.closest('.message');
-            if (!msgDiv) return;
-            const idx = parseInt(msgDiv.dataset.msgIdx);
-            const msg = messages[idx];
-            if (msg) {
-                currentMsgIndex = idx;
-                const rect = msgDiv.getBoundingClientRect();
-                contextMenu.style.left = rect.left + window.scrollX + 10 + 'px';
-                contextMenu.style.top = rect.top + window.scrollY - 40 + 'px';
-                const recallItem = document.querySelector('#contextMenu .context-menu-item[data-action="recall"]');
-                if (recallItem) recallItem.style.display = msg.senderType === 'me' ? 'block' : 'none';
-                contextMenu.classList.add('active');
-            }
-        };
+        document.querySelectorAll('.message').forEach(msgDiv => {
+            msgDiv.addEventListener('dblclick', (e) => {
+                e.stopPropagation();
+                const idx = parseInt(msgDiv.dataset.msgIdx);
+                const msg = messages[idx];
+                if (msg) {
+                    currentMsgIndex = idx;
+                    const rect = msgDiv.getBoundingClientRect();
+                    contextMenu.style.left = rect.left + window.scrollX + 10 + 'px';
+                    contextMenu.style.top = rect.top + window.scrollY - 40 + 'px';
+                    const recallItem = document.querySelector('#contextMenu .context-menu-item[data-action="recall"]');
+                    if (recallItem) recallItem.style.display = msg.senderType === 'me' ? 'block' : 'none';
+                    contextMenu.classList.add('active');
+                }
+            });
+        });
         chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
     }
 
@@ -1177,15 +1174,10 @@
         if (!text.trim()) return;
         const newMsg = { id: Date.now() + '-' + Math.random(), senderType, text: text.trim(), timestamp: formatTime(), read: senderType === 'other', isStatus: isStatus, quote: quoteData };
         messages.push(newMsg);
-        // 限制消息列表最大200条，防止性能问题
-        if (messages.length > 200) messages = messages.slice(-200);
         if (!skipSave) persistAll();
         renderChatMessages();
         if (senderType === 'me') {
-            setTimeout(() => { 
-                let m = messages.find(m => m.id === newMsg.id); 
-                if (m && !m.read) { m.read = true; persistAll(); renderChatMessages(); } 
-            }, 2000);
+            setTimeout(() => { let m = messages.find(m => m.id === newMsg.id); if (m && !m.read) { m.read = true; persistAll(); renderChatMessages(); } }, 2000);
         }
         if (preferences.backgroundMsg && document.hidden && senderType === 'other' && Notification.permission === 'granted') {
             new Notification('444新消息', { body: text.startsWith('data:image') ? '[图片]' : text });
@@ -1256,17 +1248,10 @@
         pendingReply = true;
         replyQueue.shift();
         const delayMs = getRandomDelayMs();
-        setTimeout(() => { 
-            executeReplyAction(); 
-            setTimeout(() => { pendingReply = false; processReplyQueue(); }, 500); 
-        }, delayMs);
+        setTimeout(() => { executeReplyAction(); setTimeout(() => { pendingReply = false; processReplyQueue(); }, 500); }, delayMs);
     }
     function triggerReply() { replyQueue.push({}); processReplyQueue(); }
-    function manualForceReply() { 
-        if (pendingReply) { setTimeout(() => manualForceReply(), 500); return; } 
-        const delayMs = getRandomDelayMs(); 
-        setTimeout(() => executeReplyAction(), delayMs); 
-    }
+    function manualForceReply() { if (pendingReply) { setTimeout(() => manualForceReply(), 1000); return; } const delayMs = getRandomDelayMs(); setTimeout(() => executeReplyAction(), delayMs); }
     function sendMyMessage() {
         const text = messageInput.value.trim();
         if (!text) return alert('消息不能为空');
@@ -1284,22 +1269,18 @@
             html += `<div class="image-item" data-idx="${idx}" data-url="${escapeHtml(img.dataURL)}"><img src="${img.dataURL}"><div class="delete-image" data-idx="${idx}">✕</div></div>`;
         });
         imageGrid.innerHTML = html;
-        imageGrid.onclick = (e) => {
-            const item = e.target.closest('.image-item');
-            if (!item) return;
-            if (e.target.classList.contains('delete-image')) {
-                const idx = parseInt(e.target.dataset.idx);
-                imageEmojis.splice(idx, 1);
-                persistAll();
-                renderImageGrid();
-                return;
-            }
-            const url = item.dataset.url;
-            if (url) {
-                addMessage('me', url);
-                imageEmojiPicker.classList.remove('active');
-            }
-        };
+        document.querySelectorAll('.image-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                if (e.target.classList.contains('delete-image')) return;
+                const url = item.dataset.url;
+                if (url) {
+                    addMessage('me', url);
+                    imageEmojiPicker.classList.remove('active');
+                }
+            });
+            const del = item.querySelector('.delete-image');
+            if (del) del.addEventListener('click', (e) => { e.stopPropagation(); const idx = parseInt(del.dataset.idx); imageEmojis.splice(idx, 1); persistAll(); renderImageGrid(); });
+        });
     }
 
     // 表情包管理
@@ -1312,7 +1293,7 @@
             html += `<div class="phrase-item"><span class="phrase-text"><img src="${img.dataURL}" style="width:40px;height:40px;object-fit:cover;border-radius:8px;"></span><button class="small-btn del-emoji-pack" data-idx="${idx}">删除</button></div>`;
         });
         container.innerHTML = html;
-        container.querySelectorAll('.del-emoji-pack').forEach(btn => {
+        document.querySelectorAll('.del-emoji-pack').forEach(btn => {
             btn.addEventListener('click', () => {
                 const idx = parseInt(btn.dataset.idx);
                 emojiPackImages.splice(idx, 1);
@@ -1336,33 +1317,13 @@
         });
     }
 
-    // 以下为其他辅助函数（状态调度、信件、字卡管理、日历、朋友圈等，保持原有完整实现）
-    function initAutoActive() {
-        if (autoActiveTimer) clearInterval(autoActiveTimer);
-        if (preferences.autoActive) {
-            autoActiveTimer = setInterval(() => {
-                if (!document.hidden && !pendingReply) {
-                    const delayMs = getRandomDelayMs();
-                    setTimeout(() => executeReplyAction(), delayMs);
-                }
-            }, preferences.activeIntervalSec * 1000);
-        }
-    }
-    function initBackgroundMessaging() {
-        if (backgroundInterval) clearInterval(backgroundInterval);
-        if (preferences.backgroundMsg) {
-            backgroundInterval = setInterval(() => {
-                if (document.hidden && !pendingReply) {
-                    const delayMs = getRandomDelayMs();
-                    setTimeout(() => executeReplyAction(), delayMs);
-                }
-            }, 30000);
-        }
-    }
+    // 状态调度
     function sendAutoStatus() { if (leftStatusPhrases.length) addMessage('other', leftStatusPhrases[Math.floor(Math.random() * leftStatusPhrases.length)], true); }
     function changeTopStatusRandomly() { if (topStatusPhrases.length) { customStatus = topStatusPhrases[Math.floor(Math.random() * topStatusPhrases.length)]; customStatusSpan.innerText = customStatus; persistAll(); } }
     function initAutoStatusScheduler() { if (autoStatusTimer) clearInterval(autoStatusTimer); autoStatusTimer = setInterval(() => sendAutoStatus(), 8 * 60 * 1000); }
     function initTopStatusScheduler() { if (topStatusTimer) clearInterval(topStatusTimer); topStatusTimer = setInterval(() => changeTopStatusRandomly(), 60 * 1000); }
+
+    // 主动发信
     function sendActiveLetter() {
         const today = new Date().toDateString();
         if (lastActiveLetterDate !== today) { dailyActiveLettersCount = 0; lastActiveLetterDate = today; persistAll(); }
@@ -1385,6 +1346,8 @@
     }
     function initActiveLetterScheduler() { if (activeLetterTimer) clearInterval(activeLetterTimer); activeLetterTimer = setInterval(() => { const today = new Date().toDateString(); if (lastActiveLetterDate !== today) { dailyActiveLettersCount = 0; lastActiveLetterDate = today; persistAll(); updateActiveLetterLimitInfo(); } if (dailyActiveLettersCount < 5 && Math.random() < 0.3) sendActiveLetter(); }, 60 * 60 * 1000); }
     function updateActiveLetterLimitInfo() { const infoDiv = document.getElementById('dailyLetterLimitInfo'); if (infoDiv) infoDiv.innerText = `今日对方已主动来信: ${dailyActiveLettersCount}/5 封`; }
+
+    // 信件
     function sendLetter(content) {
         const letterRecord = { type: 'sent', content, timestamp: formatTime() };
         letters.push(letterRecord);
@@ -1407,6 +1370,8 @@
         });
         updateActiveLetterLimitInfo();
     }
+
+    // 字卡管理
     function refreshPhraseUI() {
         const folderSelect = document.getElementById('batchFolderSelect');
         if (folderSelect) folderSelect.innerHTML = folders.map(f => `<option value="${f}">${f}</option>`).join('');
@@ -1448,6 +1413,8 @@
     }
     function shufflePhrases() { for (let i = phrases.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [phrases[i], phrases[j]] = [phrases[j], phrases[i]]; } persistAll(); refreshPhraseUI(); }
     function exportPhrases(filterFolder = null) { let data = filterFolder ? phrases.filter(p => p.folder === filterFolder) : phrases; const exportObj = { folders, phrases: data }; const blob = new Blob([JSON.stringify(exportObj, null, 2)], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = filterFolder ? `字卡_${filterFolder}.json` : '字卡_全部.json'; a.click(); URL.revokeObjectURL(url); }
+
+    // 状态管理
     function refreshStatusLists() {
         const topContainer = document.getElementById('topStatusList');
         const leftContainer = document.getElementById('leftStatusList');
@@ -1462,19 +1429,243 @@
     }
     function addTopStatusBatch() { const text = document.getElementById('topStatusBatchInput').value; if (!text.trim()) return; text.split(/\r?\n/).forEach(l => { if (l.trim()) topStatusPhrases.push(l.trim()); }); persistAll(); refreshStatusLists(); document.getElementById('topStatusBatchInput').value = ''; }
     function addLeftStatusBatch() { const text = document.getElementById('leftStatusBatchInput').value; if (!text.trim()) return; text.split(/\r?\n/).forEach(l => { if (l.trim()) leftStatusPhrases.push(l.trim()); }); persistAll(); refreshStatusLists(); document.getElementById('leftStatusBatchInput').value = ''; }
-    function renderCalendar() { /* 实现略，完整功能已有 */ }
-    function renderMoments() { /* 实现略，完整功能已有 */ }
+
+    // 日历
+    let currentCalendarYear = new Date().getFullYear();
+    let currentCalendarMonth = new Date().getMonth();
+    let selectedCalendarDate = null;
+    function renderCalendar() {
+        const container = document.getElementById('calendarContent');
+        if (!container) return;
+        const firstDay = new Date(currentCalendarYear, currentCalendarMonth, 1).getDay();
+        const daysInMonth = new Date(currentCalendarYear, currentCalendarMonth + 1, 0).getDate();
+        let html = `<div class="calendar-nav"><button class="small-btn" id="prevMonthBtn">◀</button><span>${currentCalendarYear}年${currentCalendarMonth + 1}月</span><button class="small-btn" id="nextMonthBtn">▶</button></div><div class="calendar-grid">`;
+        const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+        weekdays.forEach(d => { html += `<div style="font-size:0.7rem; padding:4px;">${d}</div>`; });
+        for (let i = 0; i < firstDay; i++) html += `<div></div>`;
+        for (let d = 1; d <= daysInMonth; d++) {
+            const dateStr = `${currentCalendarYear}-${String(currentCalendarMonth + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+            const hasEvent = calendarEvents[dateStr] && calendarEvents[dateStr].length > 0;
+            html += `<div class="calendar-day ${hasEvent ? 'has-event' : ''} ${selectedCalendarDate === dateStr ? 'selected' : ''}" data-date="${dateStr}">${d}</div>`;
+        }
+        html += `</div><div class="event-editor" id="eventEditor"></div>`;
+        container.innerHTML = html;
+        document.querySelectorAll('.calendar-day').forEach(day => {
+            day.addEventListener('click', () => {
+                const date = day.dataset.date;
+                selectedCalendarDate = date;
+                renderCalendar();
+                renderEventEditor(date);
+            });
+        });
+        document.getElementById('prevMonthBtn')?.addEventListener('click', () => { currentCalendarMonth--; if (currentCalendarMonth < 0) { currentCalendarMonth = 11; currentCalendarYear--; } renderCalendar(); });
+        document.getElementById('nextMonthBtn')?.addEventListener('click', () => { currentCalendarMonth++; if (currentCalendarMonth > 11) { currentCalendarMonth = 0; currentCalendarYear++; } renderCalendar(); });
+        if (selectedCalendarDate) renderEventEditor(selectedCalendarDate);
+    }
+    function renderEventEditor(date) {
+        const editorDiv = document.getElementById('eventEditor');
+        if (!editorDiv) return;
+        const events = calendarEvents[date] || [];
+        let html = `<strong>${date} 动态</strong><div id="eventList">`;
+        events.forEach((ev, idx) => { html += `<div class="event-item"><strong>${ev.type}</strong>: ${escapeHtml(ev.content)} <button class="small-btn del-event" data-idx="${idx}">删除</button></div>`; });
+        html += `</div><div class="form-row"><select id="eventType"><option value="打卡">打卡</option><option value="心情">心情</option><option value="天气">天气</option></select><input type="text" id="eventContent" placeholder="内容"><button class="small-btn" id="addEventBtn">添加</button>`;
+        html += `<button class="small-btn" id="randomWordcardCheckinBtn">🎲 随机字卡打卡</button></div>`;
+        editorDiv.innerHTML = html;
+        document.getElementById('addEventBtn')?.addEventListener('click', () => {
+            const type = document.getElementById('eventType').value;
+            const content = document.getElementById('eventContent').value.trim();
+            if (content) { if (!calendarEvents[date]) calendarEvents[date] = []; calendarEvents[date].push({ type, content }); persistAll(); renderCalendar(); }
+        });
+        document.getElementById('randomWordcardCheckinBtn')?.addEventListener('click', () => {
+            const item = generateRandomItem();
+            if (item && typeof item === 'string' && !item.startsWith('data:image')) {
+                if (!calendarEvents[date]) calendarEvents[date] = [];
+                calendarEvents[date].push({ type: '打卡', content: `📌 字卡打卡：${item}` });
+                persistAll();
+                renderCalendar();
+            } else alert('暂无有效字卡');
+        });
+        document.querySelectorAll('.del-event').forEach(btn => { btn.addEventListener('click', () => { const idx = parseInt(btn.dataset.idx); calendarEvents[date].splice(idx, 1); if (calendarEvents[date].length === 0) delete calendarEvents[date]; persistAll(); renderCalendar(); }); });
+    }
+
+    // 朋友圈
+    function renderMoments() {
+        const container = document.getElementById('momentsContent');
+        if (!container) return;
+        let html = `<div class="account-switch" id="accountSwitch"></div><div class="moments-header" id="momentsHeader" style="background-image: url('${momentsBgImage}'); background-size: cover; background-position: center;"><div class="moments-avatar" id="momentsAvatar">${momentsAvatars[currentMomentAccount] ? (momentsAvatars[currentMomentAccount].startsWith('data:') ? `<img src="${momentsAvatars[currentMomentAccount]}">` : momentsAvatars[currentMomentAccount]) : '😊'}</div><div class="moments-signature" id="momentsSignature">${escapeHtml(momentsSignatures[currentMomentAccount] || '点击设置签名')}</div></div><div class="moments-list" id="momentsList"></div><button class="small-btn add-moment-btn" id="addMomentBtn">✍️ 发朋友圈</button>`;
+        container.innerHTML = html;
+        const switchDiv = document.getElementById('accountSwitch');
+        if (switchDiv) {
+            let switchHtml = '';
+            momentsAccounts.forEach(acc => { switchHtml += `<div class="account-chip ${currentMomentAccount === acc.id ? 'active' : ''}" data-acc="${acc.id}">${acc.name}</div>`; });
+            switchHtml += `<button class="small-btn" id="addAccountBtn">➕ 添加账户</button>`;
+            switchDiv.innerHTML = switchHtml;
+            document.querySelectorAll('.account-chip').forEach(chip => { chip.addEventListener('click', () => { currentMomentAccount = chip.dataset.acc; renderMoments(); }); });
+            document.getElementById('addAccountBtn')?.addEventListener('click', () => { let name = prompt('账户名称'); if (name) { const id = Date.now() + ''; momentsAccounts.push({ id, name, avatar: '😊' }); momentsAvatars[id] = '😊'; momentsSignatures[id] = ''; persistAll(); renderMoments(); } });
+        }
+        document.getElementById('momentsAvatar')?.addEventListener('click', () => {
+            let input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = ev => { momentsAvatars[currentMomentAccount] = ev.target.result; persistAll(); renderMoments(); };
+                    reader.readAsDataURL(file);
+                }
+            };
+            input.click();
+        });
+        document.getElementById('momentsHeader')?.addEventListener('click', () => {
+            let input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = ev => { momentsBgImage = ev.target.result; persistAll(); renderMoments(); };
+                    reader.readAsDataURL(file);
+                }
+            };
+            input.click();
+        });
+        document.getElementById('momentsSignature')?.addEventListener('click', () => {
+            let newSig = prompt('个性签名', momentsSignatures[currentMomentAccount] || '');
+            if (newSig !== null) { momentsSignatures[currentMomentAccount] = newSig; persistAll(); renderMoments(); }
+        });
+        const momentsList = document.getElementById('momentsList');
+        if (momentsList) {
+            let momentsHtml = '';
+            momentsData.slice().reverse().forEach(m => {
+                const account = momentsAccounts.find(a => a.id === m.accountId);
+                if (!account) return;
+                momentsHtml += `<div class="moment-item" data-id="${m.id}">
+                    <div class="moment-header"><div class="moment-avatar">${momentsAvatars[m.accountId] ? (momentsAvatars[m.accountId].startsWith('data:') ? `<img src="${momentsAvatars[m.accountId]}">` : momentsAvatars[m.accountId]) : '😊'}</div><div class="moment-name">${escapeHtml(account.name)}</div></div>
+                    <div class="moment-content">${escapeHtml(m.content)}</div>
+                    <div class="moment-images">${(m.images || []).map(img => `<img src="${img}" class="moment-img" onclick="window.open('${img}')">`).join('')}</div>
+                    <div class="moment-time">${m.timestamp}</div>
+                    <div class="moment-actions"><span class="moment-action like-action" data-id="${m.id}">❤️ ${m.likes ? m.likes.length : 0}</span><span class="moment-action comment-action" data-id="${m.id}">💬 ${m.comments ? m.comments.length : 0}</span></div>
+                    <div class="comments-container" id="comments-${m.id}">${renderCommentsTree(m.comments || [], m.id)}</div>
+                </div>`;
+            });
+            momentsList.innerHTML = momentsHtml || '<div style="text-align:center; padding:20px;">暂无动态</div>';
+            document.querySelectorAll('.like-action').forEach(el => {
+                el.addEventListener('click', (e) => {
+                    const id = parseInt(el.dataset.id);
+                    const moment = momentsData.find(m => m.id === id);
+                    if (moment) {
+                        if (!moment.likes) moment.likes = [];
+                        const idx = moment.likes.indexOf(currentMomentAccount);
+                        if (idx === -1) moment.likes.push(currentMomentAccount);
+                        else moment.likes.splice(idx, 1);
+                        persistAll();
+                        renderMoments();
+                    }
+                });
+            });
+            document.querySelectorAll('.comment-action').forEach(el => {
+                el.addEventListener('click', (e) => {
+                    const id = parseInt(el.dataset.id);
+                    addCommentToMoment(id, null);
+                });
+            });
+            document.querySelectorAll('.reply-comment-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const momentId = parseInt(btn.dataset.momentId);
+                    const parentCommentId = btn.dataset.commentId;
+                    addCommentToMoment(momentId, parentCommentId);
+                });
+            });
+        }
+        document.getElementById('addMomentBtn')?.addEventListener('click', () => {
+            currentMomentImages = [];
+            document.getElementById('momentText').value = '';
+            document.getElementById('momentImagePreview').innerHTML = '';
+            document.getElementById('newMomentModal').classList.add('active');
+        });
+    }
+    function renderCommentsTree(comments, momentId, parentId = null, level = 0) {
+        let html = '';
+        const children = comments.filter(c => c.parentId === parentId);
+        for (let c of children) {
+            const account = momentsAccounts.find(a => a.id === c.accountId);
+            if (!account) continue;
+            html += `<div class="comment-item" style="margin-left: ${level * 16}px">
+                        <strong>${escapeHtml(account.name)}</strong>: ${escapeHtml(c.content)} 
+                        <span class="comment-reply-btn reply-comment-btn" data-moment-id="${momentId}" data-comment-id="${c.id}">回复</span>
+                        <div class="replies-list">${renderCommentsTree(comments, momentId, c.id, level + 1)}</div>
+                    </div>`;
+        }
+        return html;
+    }
+    function addCommentToMoment(momentId, parentCommentId) {
+        const useWordcard = confirm('是否使用字卡评论？\n确定=使用随机字卡，取消=手动输入');
+        let comment = '';
+        if (useWordcard) {
+            const item = generateRandomItem();
+            comment = (item && typeof item === 'string' && !item.startsWith('data:image')) ? item : '（无字卡）';
+        } else {
+            comment = prompt('输入评论内容：');
+        }
+        if (comment) {
+            const moment = momentsData.find(m => m.id === momentId);
+            if (moment) {
+                if (!moment.comments) moment.comments = [];
+                const newComment = {
+                    id: Date.now() + '-' + Math.random(),
+                    momentId: momentId,
+                    accountId: currentMomentAccount,
+                    content: comment,
+                    timestamp: formatTime(),
+                    parentId: parentCommentId || null
+                };
+                moment.comments.push(newComment);
+                persistAll();
+                renderMoments();
+            }
+        }
+    }
+
     function applyAppearance() {
         document.documentElement.style.setProperty('--bubble-radius', preferences.bubbleRadius + 'px');
         document.documentElement.style.setProperty('--font-weight-message', preferences.fontWeight);
         if (preferences.bgImage) document.documentElement.style.setProperty('--chat-bg-image', `url(${preferences.bgImage})`);
         else document.documentElement.style.setProperty('--chat-bg-image', 'none');
     }
+
     function clearChatHistory() { if (confirm('清除所有聊天记录？字卡库、信件、设置等不受影响。')) { messages = []; persistAll(); renderChatMessages(); if (chatMessagesDiv) chatMessagesDiv.innerHTML = '<div class="typing-indicator">✨ 对话已清空</div>'; } }
     function clearAllData() { if (confirm('⚠️ 清空所有数据？不可恢复！')) { localStorage.clear(); location.reload(); } }
 
+    function startAutoActive() { if (autoActiveTimer) clearInterval(autoActiveTimer); if (preferences.autoActive) { autoActiveTimer = setInterval(() => { if (!document.hidden && !pendingReply) { const delayMs = getRandomDelayMs(); setTimeout(() => executeReplyAction(), delayMs); } }, preferences.activeIntervalSec * 1000); } }
+    function initAutoActive() { startAutoActive(); }
+    function initBackgroundMessaging() { if (backgroundInterval) clearInterval(backgroundInterval); if (preferences.backgroundMsg) { backgroundInterval = setInterval(() => { if (document.hidden && !pendingReply) { const delayMs = getRandomDelayMs(); setTimeout(() => executeReplyAction(), delayMs); } }, 30000); } }
+
     function showMainMenu() { mainMenuGrid.style.display = 'grid'; for (let key in detailPages) detailPages[key].classList.remove('active'); document.getElementById('modalTitle').innerText = '设置'; }
-    function showDetailPage(pageId) { mainMenuGrid.style.display = 'none'; for (let key in detailPages) detailPages[key].classList.remove('active'); detailPages[pageId].classList.add('active'); let title = { cards: '字卡', prefs: '偏好', letters: '信件', appearance: '外观', calendar: '日历', moments: '朋友圈' }[pageId]; document.getElementById('modalTitle').innerText = title; if (pageId === 'letters') refreshLettersUI(); if (pageId === 'cards') { refreshPhraseUI(); refreshStatusLists(); refreshEmojiPackUI(); } if (pageId === 'prefs') updateUI(); if (pageId === 'appearance') updateUI(); if (pageId === 'calendar') renderCalendar(); if (pageId === 'moments') renderMoments(); }
+    function showDetailPage(pageId) { 
+        mainMenuGrid.style.display = 'none'; 
+        for (let key in detailPages) detailPages[key].classList.remove('active'); 
+        detailPages[pageId].classList.add('active'); 
+        let title = { cards: '字卡', prefs: '偏好', letters: '信件', appearance: '外观', calendar: '日历', moments: '朋友圈' }[pageId]; 
+        document.getElementById('modalTitle').innerText = title; 
+        if (pageId === 'letters') refreshLettersUI(); 
+        if (pageId === 'cards') { 
+            refreshPhraseUI(); 
+            refreshStatusLists(); 
+            refreshEmojiPackUI(); 
+            // 确保当前激活的子面板内容可见
+            const activeSub = document.querySelector('#cardsPage .sub-tab.active')?.dataset.sub;
+            if (activeSub === 'cardManage') document.getElementById('cardManagePanel').classList.add('active');
+            else if (activeSub === 'statusManage') document.getElementById('statusManagePanel').classList.add('active');
+            else if (activeSub === 'emojiPack') document.getElementById('emojiPackPanel').classList.add('active');
+        }
+        if (pageId === 'calendar') renderCalendar(); 
+        if (pageId === 'moments') renderMoments(); 
+        if (pageId === 'prefs') updateUI(); 
+        if (pageId === 'appearance') updateUI(); 
+    }
+
     function closeContextMenu() { contextMenu.classList.remove('active'); currentMsgIndex = null; }
     function executeMessageAction(action) {
         if (currentMsgIndex === null) return;
@@ -1564,6 +1755,10 @@
                 if (target === 'cardManage') document.getElementById('cardManagePanel').classList.add('active');
                 else if (target === 'statusManage') document.getElementById('statusManagePanel').classList.add('active');
                 else if (target === 'emojiPack') document.getElementById('emojiPackPanel').classList.add('active');
+                // 刷新对应内容
+                if (target === 'cardManage') refreshPhraseUI();
+                else if (target === 'statusManage') refreshStatusLists();
+                else if (target === 'emojiPack') refreshEmojiPackUI();
             });
         });
         document.getElementById('closeLetterViewBtn')?.addEventListener('click', () => { document.getElementById('letterViewModal').classList.remove('active'); });
