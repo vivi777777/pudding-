@@ -1283,6 +1283,26 @@
         });
     }
 
+    // 批量添加图片（优化性能，一次性处理）
+    function addImagesToCollection(collection, files, onComplete) {
+        let pending = files.length;
+        if (pending === 0) { if (onComplete) onComplete(); return; }
+        Array.from(files).forEach(file => {
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = ev => {
+                    collection.push({ id: Date.now() + '-' + Math.random(), dataURL: ev.target.result, name: file.name });
+                    pending--;
+                    if (pending === 0 && onComplete) onComplete();
+                };
+                reader.readAsDataURL(file);
+            } else {
+                pending--;
+                if (pending === 0 && onComplete) onComplete();
+            }
+        });
+    }
+
     // 表情包管理
     function refreshEmojiPackUI() {
         const container = document.getElementById('emojiPackList');
@@ -1300,20 +1320,6 @@
                 persistAll();
                 refreshEmojiPackUI();
             });
-        });
-    }
-
-    function addEmojiPackImages(files) {
-        Array.from(files).forEach(file => {
-            if (file.type.startsWith('image/')) {
-                const reader = new FileReader();
-                reader.onload = ev => {
-                    emojiPackImages.push({ id: Date.now() + '-' + Math.random(), dataURL: ev.target.result, name: file.name });
-                    persistAll();
-                    refreshEmojiPackUI();
-                };
-                reader.readAsDataURL(file);
-            }
         });
     }
 
@@ -1654,7 +1660,6 @@
             refreshPhraseUI(); 
             refreshStatusLists(); 
             refreshEmojiPackUI(); 
-            // 确保当前激活的子面板内容可见
             const activeSub = document.querySelector('#cardsPage .sub-tab.active')?.dataset.sub;
             if (activeSub === 'cardManage') document.getElementById('cardManagePanel').classList.add('active');
             else if (activeSub === 'statusManage') document.getElementById('statusManagePanel').classList.add('active');
@@ -1683,6 +1688,7 @@
         closeContextMenu();
     }
 
+    // 事件绑定（批量添加图片优化）
     function attachEvents() {
         sendBtn.onclick = sendMyMessage;
         forceReplyBtn.onclick = () => manualForceReply();
@@ -1703,10 +1709,32 @@
         // 状态
         document.getElementById('addTopStatusBtn')?.addEventListener('click', addTopStatusBatch);
         document.getElementById('addLeftStatusBtn')?.addEventListener('click', addLeftStatusBatch);
-        // 表情包
+        // 表情包批量添加（优化）
         document.getElementById('addEmojiPackBtn')?.addEventListener('click', () => { document.getElementById('emojiPackInput').click(); });
-        document.getElementById('emojiPackInput')?.addEventListener('change', (e) => { addEmojiPackImages(e.target.files); e.target.value = ''; });
+        document.getElementById('emojiPackInput')?.addEventListener('change', (e) => {
+            const files = e.target.files;
+            if (files.length) {
+                addImagesToCollection(emojiPackImages, files, () => {
+                    persistAll();
+                    refreshEmojiPackUI();
+                });
+            }
+            e.target.value = '';
+        });
         document.getElementById('clearEmojiPackBtn')?.addEventListener('click', () => { if (confirm('清空所有表情包图片？')) { emojiPackImages = []; persistAll(); refreshEmojiPackUI(); } });
+        // 图片库批量添加（优化）
+        document.querySelector('.batch-upload-label')?.addEventListener('click', () => batchImageUpload.click());
+        batchImageUpload.onchange = (e) => {
+            const files = e.target.files;
+            if (files.length) {
+                addImagesToCollection(imageEmojis, files, () => {
+                    persistAll();
+                    renderImageGrid();
+                });
+            }
+            batchImageUpload.value = '';
+        };
+        clearAllImagesBtn.onclick = () => { if (confirm('清空所有图片？')) { imageEmojis = []; persistAll(); renderImageGrid(); } };
         // 偏好
         const minDelay = document.getElementById('minDelaySec'); const maxDelay = document.getElementById('maxDelaySec');
         if (minDelay) minDelay.onchange = () => { preferences.minDelaySec = parseInt(minDelay.value); persistAll(); };
@@ -1735,15 +1763,12 @@
         if (bgFileInput) bgFileInput.onchange = (e) => { const file = e.target.files[0]; if (file) { const reader = new FileReader(); reader.onload = ev => { bgUrlInput.value = ev.target.result; }; reader.readAsDataURL(file); } };
         if (applyBg) applyBg.onclick = () => { preferences.bgImage = bgUrlInput.value; applyAppearance(); persistAll(); };
         if (resetBg) resetBg.onclick = () => { preferences.bgImage = ''; applyAppearance(); persistAll(); bgUrlInput.value = ''; };
-        // 头像/状态/图片库
+        // 头像/状态
         avatarBtn.onclick = () => { let newEmoji = prompt('头像表情', avatarEmoji); if (newEmoji) { avatarEmoji = newEmoji.slice(0, 2); persistAll(); updateUI(); } };
         statusTextBtn.onclick = () => { let newStatus = prompt('状态文字', customStatus); if (newStatus) { customStatus = newStatus.slice(0, 20); persistAll(); updateUI(); } };
         const editNameBtn = document.getElementById('editContactNameBtn'); if (editNameBtn) editNameBtn.onclick = () => { let newName = prompt('对方名称', contactName); if (newName) { contactName = newName.trim(); persistAll(); updateUI(); } };
         emojiBtn.onclick = () => { imageEmojiPicker.classList.toggle('active'); };
         document.addEventListener('click', (e) => { if (!imageEmojiPicker.contains(e.target) && e.target !== emojiBtn) imageEmojiPicker.classList.remove('active'); closeContextMenu(); });
-        document.querySelector('.batch-upload-label')?.addEventListener('click', () => batchImageUpload.click());
-        batchImageUpload.onchange = (e) => { Array.from(e.target.files).forEach(file => { if (file.type.startsWith('image/')) { const reader = new FileReader(); reader.onload = ev => { imageEmojis.push({ id: Date.now() + '-' + Math.random(), dataURL: ev.target.result, name: file.name }); persistAll(); renderImageGrid(); }; reader.readAsDataURL(file); } }); batchImageUpload.value = ''; };
-        clearAllImagesBtn.onclick = () => { if (confirm('清空所有图片？')) { imageEmojis = []; persistAll(); renderImageGrid(); } };
         document.querySelectorAll('#contextMenu .context-menu-item').forEach(item => { item.addEventListener('click', () => { const action = item.dataset.action; if (action) executeMessageAction(action); }); });
         // 子主题切换
         document.querySelectorAll('.sub-tab').forEach(tab => {
@@ -1755,7 +1780,6 @@
                 if (target === 'cardManage') document.getElementById('cardManagePanel').classList.add('active');
                 else if (target === 'statusManage') document.getElementById('statusManagePanel').classList.add('active');
                 else if (target === 'emojiPack') document.getElementById('emojiPackPanel').classList.add('active');
-                // 刷新对应内容
                 if (target === 'cardManage') refreshPhraseUI();
                 else if (target === 'statusManage') refreshStatusLists();
                 else if (target === 'emojiPack') refreshEmojiPackUI();
